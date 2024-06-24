@@ -1,248 +1,496 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <!-- Meta tags -->
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="imagex/png" href="./assets/mticon.ico">
-    <!-- title -->
-    <title>Matheus Terradas</title>
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/extends.css" />
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- navbar -->
-    <nav class="navbar">
-      <div class="navbar__content max-width mb-0">
-        <a href="/">
-          <img src="assets/logomt.png" alt="Matheus Terradas" />
-        </a>
-        <ul class="navbar__links">
-          <li><a href="#header">Início</a></li>
-          <li><a href="#about">Sobre</a></li>
-          <li><a href="#skills">Habilidades</a></li>
-          <li><a href="#projects">Projetos</a></li>
-          <li><a href="#footer">Contato</a></li>
-        </ul>
-        <div class="navbar__mobile">
-          <img src="assets/menu.svg" alt="menu" class="burguer" />
-          <ul class="mobile__links">
-            <li><a href="#header">Início</a></li>
-            <li><a href="#about">Sobre</a></li>
-            <li><a href="#skills">Habilidades</a></li>
-            <li><a href="#projects">Projetos</a></li>
-            <li><a href="#footer">Contato</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCES DA CELINA - Os melhores doces de Tanabi</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./assets/icon.ico">
 
-    <!-- header -->
-    <header id="header" class="max-width">
-      <div class="header__left">
-        <h1 style="color: black;">Olá! Sou Matheus Desenvolvedor Fullstack</h1>
-        <p style="color: black;">
-          Desenvolvedor web full-stack em início de carreira, 
-          focado em aprender e evoluir na criação de aplicações web escaláveis e responsivas. 
-          Tenho uma paixão por desenvolver soluções tecnológicas que resolvem problemas reais 
-          e agregam valor aos usuários.
-        </p>
-        <a href="#about" class="btn btn-primary">Saiba Mais!</a>
-      </div>
-      <div class="header__right">
-        <div class="header__image">
-          <img src="assets/matheus.jpg" alt="Matheus Terradas" class="matheus" />
-          <img src="assets/abstract.svg" alt="background" class="background" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
+    integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="./styles/output.css" />
+
+    <!-- 
+        /* CONEXÃO COM O FIREBASE */
+    -->
+
+
+    <script type="module">
+        
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-analytics.js';
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js';
+    
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7GssMG_ij5-v3FGLIUySc7CnDzePJKRU",
+            authDomain: "doces-da-celina-fba34.firebaseapp.com",
+            projectId: "doces-da-celina-fba34",
+            storageBucket: "doces-da-celina-fba34",
+            messagingSenderId: "366286538694",
+            appId: "1:366286538694:web:0578e5ea0e3c0a761954c7",
+            measurementId: "G-2N2D2EG218"
+        };
+    
+        
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+    
+        
+        async function addProduct(id, name, quantity) {
+            try {
+                const docRef = doc(db, "products", id.toString());
+                await setDoc(docRef, {
+                    name: name,
+                    quantity: quantity,
+                    createdAt: new Date()
+                });
+    
+                console.log(`Produto ${name} adicionado com ID: ${id}`);
+            } catch (e) {
+                console.error("Erro ao adicionar produto: ", e);
+            }
+        }
+    
+        
+        async function initializeProducts() {
+            try {
+                const products = [
+                    { id: 1, name: 'Doce de Leite', quantity: 10 },
+                    { id: 2, name: 'Doce de Abóbora', quantity: 10 },
+                    { id: 3, name: 'Doce de Mamão', quantity: 10 },
+                    { id: 4, name: 'Doce de Figo', quantity: 10 }
+                ];
+    
+                for (const product of products) {
+                    const productRef = doc(db, "products", product.id.toString());
+                    const productDoc = await getDoc(productRef);
+    
+                    if (!productDoc.exists()) {
+                        await addProduct(product.id, product.name, product.quantity);
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao inicializar produtos: ", e);
+            }
+        }
+    
+    
+    
+        // Função para atualizar a quantidade do produto no Firestore
+        async function updateProductQuantity(id, quantity) {
+            try {
+                const productRef = doc(db, "products", id.toString());
+                const productDoc = await getDoc(productRef);
+    
+                if (productDoc.exists()) {
+                    const currentQuantity = productDoc.data().quantity;
+                    if (currentQuantity >= quantity) {
+                        await updateDoc(productRef, {
+                            quantity: currentQuantity - quantity
+                        });
+                        console.log(`Estoque atualizado: ${productDoc.data().name} - Nova quantidade: ${currentQuantity - quantity}`);
+                        return true;  
+                    } else {
+                        console.error(`Estoque insuficiente para ${productDoc.data().name}`);
+                        return false; 
+                    }
+                } else {
+                    console.error(`Produto com ID ${id} não encontrado`);
+                    return false;  
+                }
+            } catch (e) {
+                console.error("Erro ao atualizar quantidade do produto: ", e);
+                return false;  
+            }
+        }
+    
+        // Função para verificar disponibilidade do produto no Firestore
+        async function checkProductAvailability(id) {
+            try {
+                const productRef = doc(db, "products", id.toString());
+                const productDoc = await getDoc(productRef);
+    
+                if (productDoc.exists()) {
+                    const currentQuantity = productDoc.data().quantity;
+                    return currentQuantity > 0;
+                } else {
+                    console.error(`Produto com ID ${id} não encontrado`);
+                    return false;
+                }
+            } catch (e) {
+                console.error("Erro ao verificar disponibilidade do produto: ", e);
+                return false;
+            }
+        }
+    
+        // Função JavaScript do carrinho
+        let cart = [];
+    
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+    
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    quantity: 1,
+                });
+            }
+            updateCartModal();
+        }
+    
+        function updateCartModal() {
+            console.log('Carrinho atualizado:', cart);
+        }
+    
+        // Função para adicionar produto ao carrinho
+        async function handleAddToCart(event) {
+            const button = event.target.closest('.add-to-cart-btn');
+            const productId = button.getAttribute('data-id');
+            const productName = button.getAttribute('data-name');
+            const productPrice = parseFloat(button.getAttribute('data-price'));
+    
+            const productQuantity = 1; 
+    
+            if (productId !== null && productId !== undefined) {
+                const isAvailable = await checkProductAvailability(productId);
+                if (isAvailable) {
+                    const updateSuccess = await updateProductQuantity(productId, productQuantity);
+                    if (updateSuccess) {
+                        addToCart(productName, productPrice);  
+                    } else {
+                        Toastify({
+                            text: "Estoque insuficiente!",
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            stopOnFocus: true,
+                            style: {
+                                background: "pink",
+                            },
+                        }).showToast();
+                    }
+                } else {
+                    Toastify({
+                        text: "Produto esgotado!",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        stopOnFocus: true,
+                        style: {
+                            background: "pink",
+                        },
+                    }).showToast();
+                }
+            } else {
+                console.error("Erro: 'data-id' do produto é nulo ou indefinido.");
+            }
+        }
+    
+        // Adicionando evento de clique aos botões de adicionar ao carrinho
+        document.addEventListener('DOMContentLoaded', () => {
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', handleAddToCart);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                button.addEventListener("click", handleAddToCart);
+            });
+
+            // Verificar a disponibilidade de todos os produtos ao carregar a página
+            document.querySelectorAll(".add-to-cart-btn").forEach(async (button) => {
+                const productId = button.getAttribute('data-id');
+                if (productId !== null && productId !== undefined) {
+                    const isAvailable = await checkProductAvailability(productId);
+                    if (!isAvailable) {
+                        button.disabled = true;
+                        button.innerHTML = "Esgotado";
+                    }
+                }
+            });
+        });
+
+    </script>
+    <!-- 
+        /* FIM DA CONEXAO COM O FIREBASE */
+    -->
+
+
+
+
+
+    <style>
+        @media (min-width: 768px) {
+            #menu .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); 
+            }
+            #menu .p-4 {
+                padding: 3rem; 
+            }
+        }
+
+        .product-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f472b6;
+        }
+
+        .add-to-cart-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f472b6;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: pink;
+        }
+
+        .add-to-cart-btn i {
+            margin-right: 0.5rem;
+        }
+    </style>
+    
+
+
+
+</head>
+<body>
+    <!--HEADER-->
+    <header class="w-full h-[420px] bg-zinc-900 bg-home bg-cover bg-center">
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <h1 class="text-4xl mt-4 mb-2 font-bold text-black">Doces da Celina</h1>
+            <span class="text-black font-medium">Rua Anibal Menegasso N°35</span>
+            <div class="bg-green-600 px-4 py-1 rounded-lg mt-5" id="date-span">
+                <span class="text-white font-medium">Segunda a Domingo - 8:00 às 18:00 </span>
+            </div>
         </div>
-      </div>
     </header>
+    <!--FIM HEADER-->
 
-    <!-- Sobre -->
-    <section id="about" class="about max-width">
-      <div class="about__left">
-        <h2 style="color: black;" class="secondary-title">Além do código: quem sou eu?</h2>
-        <p>
-          Que tal se conectar comigo nas redes sociais abaixo e saber mais sobre
-          meu trabalho?
-        </p>
-        <ul>
-          <li>
-            <a href="https://www.instagram.com/matheus_terradas/" target="_blank"><img src="assets/instagram.svg" alt="Instagram" /></a>
-          </li>
-          <li>
-            <a href="https://www.linkedin.com/in/matheus-terradas-5b14012a4/" target="_blank"><img src="assets/linkedin.svg" alt="Linkedin" /></a>
-          </li>
-          <li>
-            <a href="https://www.facebook.com/profile.php?id=100008999821806" target="_blank"><img src="assets/facebook.svg" alt="Facebook" /></a>
-          </li>
-        </ul>
-      </div>
-      <div class="about__right">
-        <h3 style="color: black;" class="tertiary-title mb-m">
-          Desenvolvedor fullstack apaixonado por tecnologia e soluções criativas
-        </h3>
-        <p>
-          Olá, eu sou Matheus Terradas, um desenvolvedor fullstack iniciante, apaixonado por tecnologia e soluções criativas. 
-          Estou cursando Análise e Desenvolvimento de Sistemas e, ao longo dos últimos anos, tenho explorado diversas tecnologias 
-          e plataformas para criar soluções robustas e escaláveis.
-        </p>
-        <p>
-          Embora esteja no início da minha carreira, busco melhorar dia a dia e estou constantemente aprendendo coisas novas. 
-          Amo o desafio de encontrar soluções inovadoras para problemas complexos e estou sempre focado em crescer como profissional.
-        </p>
-      </div>
-    </section>
+    <h2 class="text-2xl md:text-3xl font-bold text-center mt-9 mb-6">
+        Conheça nosso menu
+    </h2>
 
-    <!-- habilidades -->
-    <section id="skills" class="skills">
-      <div class="skills__content max-width">
-        <h2 style="color: black;" class="tertiary-title">Minha caixinha de ferramentas</h2>
-        <p class="description">
-          Descubra as habilidades e ferramentas que domino e que me permitem
-          criar soluções criativas e funcionais para meus clientes.
-        </p>
-        <ul>
-          <li class="skills__item">
-            <div class="image-container">
-              <img src="assets/notebook.png" alt="Desenvolvimento Web" />
-            </div>
-            <h3>Desenvolvimento Web</h3>
-            <p>
-              Experiência em desenvolvimento fullstack com foco em tecnologias
-              modernas.
-            </p>
-          </li>
-          <li class="skills__item">
-            <div class="image-container">
-              <img src="assets/colors.png" alt="Web Design" />
-            </div>
-            <h3>Web Design</h3>
-            <p>
-              Habilidade em criar layouts modernos e responsivos, com foco na
-              experiência do usuário.
-            </p>
-          </li>
-          <li class="skills__item">
-            <div class="image-container">
-              <img src="assets/phone.png" alt="UX/UI Design" />
-            </div>
-            <h3>UX/UI Design</h3>
-            <p>
-              Conhecimentos em design de interface e experiência do usuário
-              visualmente atraentes e intuitivas.
-            </p>
-          </li>
-          <li class="skills__item">
-            <div class="image-container">
-              <img src="assets/files.png" alt="Gerenciamentos de versões" />
-            </div>
-            <h3>Gerenciamentos de versões</h3>
-            <p>
-              Experiência em ferramentas de gerenciamento de versão para
-              controle de projetos.
-            </p>
-          </li>
-        </ul>
-      </div>
-    </section>
+    <!--INICIO MENU-->
+    <div id="menu">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 md:gap-10 mx-auto max-w-7xl px-2">
+            <!--PRODUTO ITEM-->
+            <div class="product-item">
+                <img src="./assets/docedeleite.jpg" alt="Doce de Leite" class="product-image">
+                <div class="product-details">
+                    <p class="product-title">Doce de Leite 0,5 kg</p>
+                    <p class="product-description">Descubra o sabor irresistível do nosso doce de leite artesanal! Feito com ingredientes selecionados e preparado com muito carinho, cada colherada é uma explosão de doçura e tradição. Perfeito para acompanhar sobremesas ou saborear puro!</p>
+                </div>
+                <div class="flex items-center gap-2 justify-between mt-3">
+                    <p class="product-price">R$ 25,00</p>
+                    
 
-    <!-- Projetos -->
-    <section id="projects" class="projects max-width">
-      <div class="projects__content">
-        <h2 style="color: black;" class="secondary-title">Projetos em Destaque</h2>
-        <p>
-          De ideias abstratas a projetos bem-sucedidos, aqui estão alguns dos
-          meus trabalhos mais recentes
-        </p>
-      </div>
-      <ul>
-        <li>
-          <div class="image">
-            <img src="assets/carport.png" alt="CarPort SolarLab" />
-          </div>
-          <div class="projects__info">
-            <h3 style="color: black;" class="tertiary-title">
-              Sistema Fotovoltáico CarPort em nuvem
-            </h3>
-            <p>
-              Site web desenvolvido para o Trabalho de Conclusão de Curso (TCC), usando
-              HTML, CSS, JavaScript e a plataforma de nuvem ThingSpeak. O sistema oferece funcionalidades como monitoramento da captação solar, 
-              comparação de tensão ao longo de três dias e acompanhamento da posição solar.
-              
-              
-            </p>
-            <a href="#">Leia mais &rarr;</a>
-          </div>
-        </li>
-        <li class="projects__reversed-list">
-          <div class="image">
-            <img src="assets/gerencisys.jpg" alt="Sistema Comercial GerenciSYS" />
-          </div>
-          <div class="projects__info">
-            <h3 style="color: black;" class="tertiary-title">
-             Sistema Comercial GerenciSYS
-            </h3>
-            <p>
-              Projeto Sistema Comercial desenvolvido do zero com tecnologias como JAVA e integração com Banco de Dados MYSQL
-            </p>
-            <a href="#">Leia mais &rarr;</a>
-          </div>
-        </li>
-        <li>
-          <div class="image">
-            <img src="assets/cardapio3.png" alt="Site web Cardápio" />
-          </div>
-          <div class="projects__info">
-            <h3 style="color: black;" class="tertiary-title">
-              Loja virtual Celina Doces
-            </h3>
-            <p>
-              Site de e-commerce desenvolvido com tecnologias como HTML, CSS, TailwindCSS e JavaScript. 
-              Além de integração com Banco de Dados Firestore.
-            </p>
-            <a href="https://cardapio-digital-liart.vercel.app">Leia mais &rarr;</a>
-          </div>
-        </li>
-      </ul>
-    </section>
+                    <div id="carrinho">
+                    <button class="bg-gray-900 px-5 rounded add-to-cart-btn" data-id="1" data-name="Doce de Leite" data-price="25">
+                        <div id="carrinho">
+                        <i class="fa fa-cart-plus text-lg text-white"></i>
+                        </div>
+                    </button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Footer -->
-    <footer id="footer">
-      <div class="footer__content max-width mb-0">
-        <h2 style="color: black;" class="tertiary-title mb-s">Vamos conversar?</h2>
-        <p class="mb-m">
-          Ficarei feliz em saber mais sobre seus projetos e como podemos
-          trabalhar juntos para torná-los realidade.
-        </p>
-        <div class="footer__contact mb-m">
-          <span class="mb-m">matheusterradasdev@gmail.com</span>
-          <span>(17) 99624-9944</span>
+            <div class="product-item">
+                <img src="./assets/abobora.webp" alt="Doce de Abóbora" class="product-image">
+                <div class="product-details">
+                    <p class="product-title">Doce de Abóbora 0,5 kg</p>
+                    <p class="product-description">Experimente o nosso doce de abóbora artesanal! Preparado com abóboras frescas e um toque especial de especiarias, esse doce traz o sabor autêntico da tradição. Perfeito para sobremesas ou para ser saboreado puro, é uma delícia que encanta a cada pedaço!</p>
+                </div>
+                <div class="flex items-center gap-2 justify-between mt-3">
+                    <p class="product-price">R$ 15,00</p>
+                    <input type="hidden" class="stock-input" value="10">
+                    <button class="bg-gray-900 px-5 rounded add-to-cart-btn" data-id="2" data-name="Doce de Abóbora" data-price="15">
+                        <div id="carrinho">
+                        <i class="fa fa-cart-plus text-lg text-white"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="./assets/docemamao.webp" alt="Doce de Mamão" class="product-image">
+                <div class="product-details">
+                    <p class="product-title">Doce de Mamão 0,5 kg</p>
+                    <p class="product-description">Descubra o sabor tropical do nosso doce de mamão! Feito com mamão fresco e açúcar na medida certa, cada pedaço é uma explosão de doçura e frescor. Ideal para adoçar o seu dia ou para acompanhar aquele cafezinho especial. Experimente e apaixone-se!</p>
+                </div>
+                <div class="flex items-center gap-2 justify-between mt-3">
+                    <p class="product-price">R$ 15,00</p>
+                    <input type="hidden" class="stock-input" value="10">
+                    <button class="bg-gray-900 px-5 rounded add-to-cart-btn" data-id="3" data-name="Doce de Mamão" data-price="15">
+                        <i class="fa fa-cart-plus text-lg text-white"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="./assets/figo.jpeg" alt="Doce de Figo" class="product-image">
+                <div class="product-details">
+                    <p class="product-title">Doce de Figo 0,5 kg</p>
+                    <p class="product-description">Descubra o sabor tropical do nosso doce de figo! Feito com figos frescos e açúcar na medida certa, cada pedaço é uma explosão de doçura e frescor. Ideal para adoçar o seu dia ou para acompanhar aquele cafezinho especial. Experimente e apaixone-se!</p>
+                </div>
+                <div class="flex items-center gap-2 justify-between mt-3">
+                    <p class="product-price">R$ 20,00</p>
+                    <input type="hidden" class="stock-input" value="10">
+                    <button class="add-to-cart-btn" data-id="4" data-name="Doce de Figo" data-price="20">
+                        <i class="fa fa-cart-plus text-lg text-white"></i>
+                    </button>
+                </div>
+            </div>
+            <!--fIM PRODUTO ITEM-->
+        </main>
+    </div>
+    <!--FIM MENU-->
+
+    <!--MODAL CART-->
+    <div id="cart-modal" class="bg-black bg-opacity-60 w-full h-full fixed top-0 left-0 z-[99] items-center justify-center hidden">
+        <div class="bg-white p-5 rounded-md min-w-[90%] md:min-w-[600px]">
+            <h2 class="text-center font-bold text-2xl mb-2">Meu carrinho</h2>
+
+            <div id="cart-items" class="flex justify-between mb-2 flex-col"></div>
+
+            <p class="font-bold">Total:<span id="cart-total"> 0,00 </span></p>
+            <p class="font-bold mt-4">Endereço de entrega</p>
+
+            <input type="text" placeholder="Digite seu endereço completo" id="address" 
+            class="w-full border-2 p-1 rounded my-1">
+
+            <p class="text-red-500 hidden" id="address-warn">Digite seu endereço completo!</p>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="pickup-checkbox" class="mr-2">
+                <label for="pickup-checkbox">Retirar pessoalmente</label>
+            </div>
+
+            <div class="mt-4 hidden" id="name-container">
+                <p class="font-bold">Nome</p>
+                <input type="text" placeholder="Digite seu nome" id="name-input" 
+                class="w-full border-2 p-1 rounded my-1">
+                <p class="text-red-500 hidden" id="name-warn">Digite seu nome completo!</p>
+            </div>
+
+            <div class="mt-4 hidden" id="time-container">
+                <p class="font-bold">Horário de Retirada</p>
+                <select id="pickup-time-input" class="w-full border-2 p-1 rounded my-1">
+                    <option value="">Selecione um horário</option>
+                    <option value="8:00">8:00</option>
+                    <option value="9:00">9:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                    <option value="17:00">17:00</option>
+                </select>
+                <p class="text-red-500 hidden" id="time-warn">Selecione um horário de retirada!</p>
+            </div>
+
+            <div class="mt-4 hidden" id="payment-container">
+                <p class="font-bold">Meio de Pagamento</p>
+                <select id="payment-method" class="w-full border-2 p-1 rounded my-1">
+                    <option value="">Selecione um meio de pagamento</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Cartão de Débito">Cartão de Débito</option>
+                    <option value="Pix">Pix</option>
+                </select>
+                <p class="text-red-500 hidden" id="payment-warn">Selecione um meio de pagamento!</p>
+            </div>
+
+            <div class="flex justify-end mt-4">
+                <button id="close-modal" class="py-2 px-5 bg-gray-600 text-white rounded-md mr-2">Cancelar</button>
+                <button id="checkout-btn" class="py-2 px-5 bg-pink-400 text-white rounded-md">Finalizar Compra</button>
+            </div>
         </div>
-        <ul class="mb-l">
-          <li>
-            <a href="https://www.instagram.com/matheus_terradas/" target="_blank"><img src="assets/instagram.svg" alt="Instagram" /></a>
-          </li>
-          <li>
-            <a href="https://www.linkedin.com/in/matheus-terradas-5b14012a4/" target="_blank"><img src="assets/linkedin.svg" alt="Linkedin" /></a>
-          </li>
-          <li>
-            <a href="https://www.facebook.com/profile.php?id=100008999821806" target="_blank"><img src="assets/facebook.svg" alt="Facebook" /></a>
-          </li>
-        </ul>
-        <p class="footer__copyright">
-          © 2024 Matheus Terradas. Todos os direitos reservados.
-        </p>
-      </div>
-    </footer>
-    <!-- script -->
-    <script src="scripts/index.js"></script>
-  </body>
+    </div>
+    <!--FIM MODAL CART-->
+
+    <button class="fixed right-5 bottom-5 bg-pink-400 p-4 rounded-full" id="cart-btn">
+        <i class="fa fa-shopping-cart text-white text-xl"></i>
+        <span id="cart-counter" class="bg-red-600 px-2 py-1 rounded-full text-white text-xs absolute -top-2 -right-2">0</span>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script type="module" src="./script.js"></script>
+    
+    
+</body>
 </html>
