@@ -11,6 +11,7 @@
   padding: 3rem 4rem 1rem;
   display: flex;
   justify-content: space-between;
+  width: 30px;
 }
 
 .navbar .navbar__content .navbar__links li {
